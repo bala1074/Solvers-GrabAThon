@@ -39,6 +39,7 @@
             app:layout_constraintTop_toTopOf="@id/text_dashboard"
             android:ems="10"
             android:text=""
+            android:hint="amount"
             tools:layout_editor_absoluteX="85dp"
             tools:layout_editor_absoluteY="41dp" />
 
@@ -49,10 +50,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="25dp"
             android:layout_marginEnd="8dp"
             android:textSize="20sp"
-            android:text="Account Number"
+            android:text="Account Id"
             android:textDirection="ltr"/>
 
         <EditText
@@ -68,6 +69,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/text_dashboard_1"
             android:ems="10"
+            android:hint="account id"
             android:inputType="number"
             tools:layout_editor_absoluteX="85dp"
             tools:layout_editor_absoluteY="41dp" />
@@ -78,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="25dp"
             android:layout_marginEnd="8dp"
             android:textSize="20sp"
             android:text="OTP"
@@ -99,6 +101,7 @@
             android:ems="10"
             android:inputType="number"
             android:text=""
+            android:hint="otp"
             tools:layout_editor_absoluteX="85dp"
             tools:layout_editor_absoluteY="41dp" />
 
@@ -113,6 +116,7 @@
             android:textSize="40dp"
             android:textAlignment="center"
             android:background="#00FF00"
+            android:textStyle="bold"
             />
 
     </LinearLayout>

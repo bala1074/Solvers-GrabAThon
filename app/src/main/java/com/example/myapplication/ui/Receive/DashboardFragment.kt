@@ -16,6 +16,13 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.myapplication.R
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import android.R.attr.key
+import java.security.MessageDigest
+import java.security.SecureRandom
+import javax.crypto.Cipher
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
+
 
 class DashboardFragment : Fragment()  {
 
@@ -36,12 +43,21 @@ class DashboardFragment : Fragment()  {
 
         val submit: TextView = root.findViewById(R.id.Submit);
 
+        var prev :String="";
         submit.setOnClickListener {
             val amount = amountView.text;
             val account = accountView.text;
             val otp = otpView.text;
-            Toast.makeText(activity, " "+amount+" "+account+" "+otp, Toast.LENGTH_SHORT).show()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //val details = encryptMthd(""+amount+" "+account+" "+otp);
+            val details = ""+amount+" "+account+" "+otp
+            if(!(amount.toString().length>0 && account.toString().length>0 && otp.toString().length>0)){
+                Toast.makeText(activity, "Please fill the details properly", Toast.LENGTH_LONG).show()
+            }
+            else if(prev.equals(otp.toString()))
+            {
+                Toast.makeText(activity, "OTP alredy used!!", Toast.LENGTH_LONG).show()
+            }
+            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
                 if (context?.let { it1 -> ActivityCompat.checkSelfPermission(it1,Manifest.permission.SEND_SMS) } == PackageManager.PERMISSION_DENIED) {
 
@@ -52,10 +68,61 @@ class DashboardFragment : Fragment()  {
 
                 } else {
                     val smsManager = SmsManager.getDefault()
-                    smsManager.sendTextMessage("919220592205", null, "PM6PF hello working", null, null)
+                    smsManager.sendTextMessage("919220592205", null, "PM6PF *"+details, null, null)
+                    Toast.makeText(activity, "Payment triggered successfully!!", Toast.LENGTH_LONG).show()
+                    prev = otp.toString();
                 }
             }
+
         }
         return root
     }
+
+    fun encryptMthd(msg: String): String {
+        val encryptedMsg = encrypt(msg, "abcd")
+        var str = ""
+        var start = true
+        for (`val` in encryptedMsg) {
+            if (start) {
+                str = "" + `val`
+                start = false
+            } else
+                str = "$str,$`val`"
+        }
+        return str
+    }
+
+
+    @Throws(Exception::class)
+    fun encrypt(plainText: String, key: String): ByteArray {
+        val clean = plainText.toByteArray()
+
+        // Generating IV.
+        val ivSize = 16
+        val iv = ByteArray(ivSize)
+        val random = SecureRandom()
+        random.nextBytes(iv)
+        val ivParameterSpec = IvParameterSpec(iv)
+
+        // Hashing key.
+        val digest = MessageDigest.getInstance("SHA-256")
+        digest.update(key.toByteArray(charset("UTF-8")))
+        println(key.toByteArray(charset("UTF-8")))
+        val keyBytes = ByteArray(16)
+        System.arraycopy(digest.digest(), 0, keyBytes, 0, keyBytes.size)
+        val secretKeySpec = SecretKeySpec(keyBytes, "AES")
+
+        // Encrypt.
+        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec)
+        val encrypted = cipher.doFinal(clean)
+
+        // Combine IV and encrypted part.
+        val encryptedIVAndText = ByteArray(ivSize + encrypted.size)
+        System.arraycopy(iv, 0, encryptedIVAndText, 0, ivSize)
+        System.arraycopy(encrypted, 0, encryptedIVAndText, ivSize, encrypted.size)
+
+        return encryptedIVAndText
+    }
+
 }

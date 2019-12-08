@@ -2,5 +2,5 @@
     <string name="app_name">Grab</string>
     <string name="title_home">Pay</string>
     <string name="title_dashboard">Receive</string>
-    <string name="title_notifications">Notifications</string>
+<!--    <string name="title_notifications">Notifications</string>-->
 </resources>
